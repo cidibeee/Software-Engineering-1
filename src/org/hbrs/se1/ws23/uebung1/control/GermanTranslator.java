@@ -1,16 +1,33 @@
 package org.hbrs.se1.ws23.uebung1.control;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class GermanTranslator implements Translator {
 
 	public String date = "Okt/2023"; // Default-Wert
 
+	public GermanTranslator()
+	{
+		Calendar c = Calendar.getInstance();
+		String tmp = new SimpleDateFormat("MMM/yyyy").format(c.getTime());
+		setDate(tmp);
+	}
 	/**
 	 * Methode zur Übersetzung einer Zahl in eine String-Repraesentation
 	 */
 	public String translateNumber( int number ) {
 		// [ihr Source Code aus Übung 1-2]
+		String[] translations = {"eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn"};
 
-		return "null";
+		try
+		{
+			return translations[number - 1];
+		}
+		catch (Exception e)
+		{
+			return ("Übersetzung der Zahl " + number + " nicht möglich " + version);
+		}
 	}
 
 	/**
