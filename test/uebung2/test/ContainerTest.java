@@ -28,6 +28,4 @@ public class ContainerTest {
         assertEquals(2, c.size());
         assertEquals("Erfolgreich entfernt!", c.deleteMember(m2.getID()));
     }
-
-
 }
