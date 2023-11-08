@@ -1,11 +1,15 @@
 package org.hbrs.se1.ws23.uebung3.persistence;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
 
+
+    private List<E> newList;
     // URL of file, in which the objects are stored
-    private String location = "objects.ser";
+    private String location = "objects.txt";
 
     // Backdoor method used only for testing purposes, if the location should be changed in a Unit-Test
     // Example: Location is a directory (Streams do not like directories, so try this out ;-)!
@@ -23,6 +27,7 @@ public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
 
     }
 
+
     @Override
     /**
      * Method for closing the connections to a stream
@@ -31,12 +36,21 @@ public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
 
     }
 
+
     @Override
     /**
      * Method for saving a list of Member-objects to a disk (HDD)
      */
-    public void save(List<E> member) throws PersistenceException  {
-
+    public void save(List<E> member) throws PersistenceException {
+        try {
+            FileOutputStream fos = new FileOutputStream(location);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            //oos.writeInt(10);
+            oos.writeObject(member);
+        } catch (Exception e) {
+            throw new PersistenceException(PersistenceException.ExceptionType.ConnectionNotAvailable,
+                    "Schreiben der Daten nicht möglich");
+        }
     }
 
     @Override
@@ -45,7 +59,7 @@ public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
      * Some coding examples come for free :-)
      * Take also a look at the import statements above ;-!
      */
-    public List<E> load() throws PersistenceException  {
+    public List<E> load() throws PersistenceException {
         // Some Coding hints ;-)
 
         // ObjectInputStream ois = null;
@@ -59,13 +73,23 @@ public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
         // ois = new ObjectInputStream(fis);
 
         // Reading and extracting the list (try .. catch ommitted here)
-        // Object obj = ois.readObject();
+        try
+        {
+            FileInputStream fis = new FileInputStream(location);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            newList = (List<E>) ois.readObject();
+        }
+        catch(Exception e)
+        {
+            throw new PersistenceException(PersistenceException.ExceptionType.ConnectionNotAvailable, "File onnte nicht gelesen werden");
+        }
 
-        // if (obj instanceof List<?>) {
-        //       newListe = (List) obj;
-        // return newListe
 
-        // and finally close the streams (guess where this could be...?)
-        return null;
+            // and finally close the streams (guess where this could be...?)
+
+
+
+
+        return newList;
     }
 }
