@@ -87,6 +87,7 @@ public class ContainerTest {
 
         c.deleteMember(m1.getID());
 
+
         assertEquals(c.size(), 2);
 
         try {
