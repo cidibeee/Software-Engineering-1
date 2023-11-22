@@ -1,8 +1,12 @@
 package org.hbrs.se1.ws23.uebung4.prototype;
-    public class UserStory {
+
+import java.io.Serializable;
+
+public class UserStory implements Serializable {
         // ToDo: Sind die Attribute der Klasse UserStory vollständig? (F4)
 
         String titel;
+        String akzeptanz;
         int aufwand = 0;
         int id = 0;
         int mehrwert = 0;
@@ -22,15 +26,17 @@ package org.hbrs.se1.ws23.uebung4.prototype;
 
 
 
-        public UserStory(int id, String titel, int mehrwert, int strafe,
-                         int aufwand, int risk, double prio) {
+        public UserStory(int id, String titel, String akzeptanz, int mehrwert, int strafe,
+                         int aufwand, int risk, String project) {
             this.id = id;
             this.titel = titel;
+            this.akzeptanz = akzeptanz;
             this.mehrwert = mehrwert;
             this.strafe = strafe;
             this.aufwand = aufwand;
             this.risk = risk;
-            this.prio = prio;
+            this.prio = (double) (mehrwert + strafe) / (aufwand + risk);
+            this.project = project;
         }
 
         public UserStory() {
@@ -81,5 +87,20 @@ package org.hbrs.se1.ws23.uebung4.prototype;
             this.strafe = strafe;
         }
 
-     }
+
+        @Override
+        public String toString() {
+            return "UserStory{" +
+                    "titel='" + titel + '\'' +
+                    ", akzeptanz='" + akzeptanz + '\'' +
+                    ", aufwand=" + aufwand +
+                    ", id=" + id +
+                    ", mehrwert=" + mehrwert +
+                    ", risk=" + risk +
+                    ", strafe=" + strafe +
+                    ", prio=" + prio +
+                    ", project='" + project + '\'' +
+                    '}';
+        }
+    }
 

@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * 
  */
 
-public class Container {
+public class 	Container {
 	 
 	// Interne ArrayList zur Abspeicherung der Objekte vom Type UserStory
 	private List<UserStory> liste = null;
@@ -42,7 +42,7 @@ public class Container {
 	// Todo: Bewertung Thread-Safeness (F1)
 	// Nachteil: ggf. geringer Speicherbedarf, da Singleton zu Programmstart schon erzeugt wird
 	// Todo: Bewertung Speicherbedarf (F1)
-	private static Container instance = new Container();
+	private static Container instance;
 	
 	// URL der Datei, in der die Objekte gespeichert werden 
 	final static String LOCATION = "allStories.ser";
@@ -52,6 +52,10 @@ public class Container {
 	 * @return
 	 */
 	public static Container getInstance() {
+		if(instance == null)
+		{
+			instance = new Container();
+		}
 		return instance;
 	}
 	
@@ -59,7 +63,7 @@ public class Container {
 	 * Vorschriftsmäßiges Ueberschreiben des Konstruktors (private) gemaess Singleton-Pattern (oder?)
 	 * Nun auf private gesetzt! Vorher ohne Access Qualifier (--> dann package-private)
 	 */
-	Container(){
+	private Container(){
 		liste = new ArrayList<UserStory>();
 	}
 	
@@ -85,9 +89,10 @@ public class Container {
 		// ToDo: Funktionsweise des Scanners erklären (F3)
 		Scanner scanner = new Scanner( System.in );
 
+		System.out.println("UserStory-Tool V1.1 © Cid Bocklemünd");
+
 		while ( true ) {
 			// Ausgabe eines Texts zur Begruessung
-			System.out.println("UserStory-Tool V1.0 by Julius P. (dedicated to all my friends)");
 
 			System.out.print( "> "  );
 
@@ -98,26 +103,80 @@ public class Container {
 
 			// 	Falls 'help' eingegeben wurde, werden alle Befehle ausgedruckt
 			if ( strings[0].equals("help") ) {
-				System.out.println("Folgende Befehle stehen zur Verfuegung: help, dump....");
+				System.out.println("befehl [Parameter]\n" +
+						"Folgende Befehle stehen zur Verfuegung:\n" +
+						"help\n" +
+						"enter[id title akzeptanz mehrwert strafe aufwand risk project]\n" +
+						"store\n" +
+						"load\n" +
+						"dump\n" +
+						"search[Project]\n" +
+						"exit");
 			}
-			// Auswahl der bisher implementierten Befehle:
-			if ( strings[0].equals("dump") ) {
+
+			if(strings[0].equals(("enter")))
+			{
+				if(strings.length < 9)
+				{
+					System.out.println("Nicht genuegend Parameter vorhanden");
+					continue;
+				}
+				int[] intsinUserstory = {1, 4, 5, 6, 7};
+
+				for(int i:intsinUserstory)
+				{
+					if(Integer.parseInt(strings[i]) < 0)
+					{
+						System.out.println("Parameter duerfen nicht negativ sein!");
+						return;
+					}
+
+				}
+
+				UserStory uss = new UserStory(Integer.parseInt(strings[1]), strings[2], strings[3],
+						Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]), Integer.parseInt(strings[7]),
+						strings[8]);
+				addUserStory(uss);
+			}
+			if(strings[0].equals(("store")))
+			{
+				store();
+			}
+
+			if(strings[0].equals(("load")))
+			{
+				load();
+			}
+
+			if(strings[0].equals(("dump")))
+			{
 				startAusgabe();
 			}
+
+			if(strings[0].equals(("search")))
+			{
+				if(strings.length < 2)
+				{
+					System.out.println("Der eingabe fehlt ein Parameter!");
+					continue;
+				}
+				search(strings[1]);
+			}
 			// Auswahl der bisher implementierten Befehle:
-			if ( strings[0].equals("enter") ) {
-				// Daten einlesen ...
-				// this.addUserStory( new UserStory( data ) ) um das Objekt in die Liste einzufügen.
+			if ( strings[0].equals("exit") ) {
+				break;
 			}
-								
-			if (  strings[0].equals("store")  ) {
-				// Beispiel-Code
-				UserStory userStory = new UserStory();
-				userStory.setId(22);
-				this.addUserStory( userStory );
-				this.store();
-			}
+
+
 		} // Ende der Schleife
+		System.out.println("Programm wurde beendet");
+	}
+
+	private void search(String projectsearch)
+	{
+		liste.stream()
+				.filter(element -> element.getProject().equals(projectsearch))
+				.forEach(System.out::println);
 	}
 
 	/**
@@ -130,11 +189,12 @@ public class Container {
 
 		// [Sortierung ausgelassen]
 		// Todo: Implementierung Sortierung (F4)
-
+		liste.sort(new UserStoryComparator());
 		// Klassische Ausgabe ueber eine For-Each-Schleife
-		for (UserStory story : liste) {
-			System.out.println(story.toString());
-		}
+		liste.stream()
+				.filter(element -> element.getId() > 0)
+				.filter(element -> element.getId() < 100)
+				.forEach(System.out::println);
 
 		// [Variante mit forEach-Methode / Streams (--> Kapitel 9, Lösung Übung Nr. 2)?
 		//  Gerne auch mit Beachtung der neuen US1
