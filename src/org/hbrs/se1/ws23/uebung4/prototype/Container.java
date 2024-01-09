@@ -167,6 +167,10 @@ public class 	Container {
 				break;
 			}
 
+			else {
+				System.out.println("Command not found!");
+			}
+
 
 		} // Ende der Schleife
 		System.out.println("Programm wurde beendet");
